@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
+const mongoose = require('mongoose');
+const validator = require('validator');
 
 //Creating user schema
 const userSchema = new mongoose.Schema({
@@ -11,17 +11,19 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: [true, "Email id already exists"],
+    unique: [true, 'Email id already exists'],
     validate(value){
-      if(!validator.isEmail(value)) throw new Error("Please enter valid email");
+      if(!validator.isEmail(value)) throw new Error('Please enter valid email');
     }
   },
   phone: {
-    type: Number,
+    type: String,
     min: 10,
-    max: 10,
     required: true,
-    unique: [true, "Phone number already exists"],
+    unique: [true, 'Phone number already exists'],
+    validate(value){
+      if(!validator.isMobilePhone(value)) throw new Error('Please enter valid Number');
+    }
   },
   role: {
     type: String, 
@@ -30,6 +32,6 @@ const userSchema = new mongoose.Schema({
 });
 
 //Creating new collection
-const Student = new mongoose.model('Student', userSchema);
+const User = new mongoose.model('User', userSchema);
 
-module.exports = Student;
+module.exports = User;
