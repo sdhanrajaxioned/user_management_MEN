@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDb = require('./db/connection');
 const User = require('./models/users');
+const bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -11,6 +12,33 @@ connectDb(); // seting up mongo db
 //can parse incoming Request Object if object, with nested objects, or generally any type.
 // app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+//login route
+app.post('/login',async (req, res) => {
+  
+  try {
+    const { email, password } = req.body;
+    
+    if(!email || !password) {
+      return res.status(400).json({ error: "Pls fill the data" });
+    }
+
+    const userLogin = await User.findOne({ email: email });
+
+    if(userLogin){
+      const comparePass = await bcrypt.compare(password, userLogin.password);
+      if(!comparePass) {
+        res.status(400).json({ error: "Invalid Credentials" });
+      } else {
+        res.json({ message: "user Signed in Successfully"})
+      }
+    } else {
+      res.status(400).json({ error: "Invalid credentials" })
+    }
+  } catch (error) {
+    console.log(error)
+  }
+});
 
 //route for homepage
 app.get('/', (_req, res) => {

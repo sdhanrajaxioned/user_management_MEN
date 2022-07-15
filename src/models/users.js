@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcrypt');
 
 //Creating user schema
 const userSchema = new mongoose.Schema({
@@ -16,6 +17,10 @@ const userSchema = new mongoose.Schema({
       if(!validator.isEmail(value)) throw new Error('Please enter valid email');
     }
   },
+  password: {
+    type:String,
+    required:true
+  },
   phone: {
     type: String,
     min: 10,
@@ -29,6 +34,14 @@ const userSchema = new mongoose.Schema({
     type: String, 
     default: 'basic' 
   }
+});
+
+//encrypting password before saving document
+userSchema.pre("save", async function(next) {
+  if(this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 12)
+  }
+  next();
 });
 
 //Creating new collection
