@@ -1,7 +1,10 @@
 const express = require("express");
+const connectDb = require("./db/connection");
 const app = express();
 
 const port = process.env.PORT || 3000; // use port 3000 unless there exists a preconfigured port
+
+connectDb(); // seting up mongo db
 
 //route for homepage
 app.get('/', (_req, res) => {
