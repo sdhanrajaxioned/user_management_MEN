@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema({
 
 //encrypting password before saving document
 userSchema.pre("save", async function(next) {
+  console.log(this.password)
   if(this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 12)
   }
